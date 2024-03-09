@@ -1,0 +1,38 @@
+{
+  "type": "component",
+  "metadata": {},
+  "schema": {
+    "name": "json-editor",
+    "friendlyName": "JSON Editor",
+    "description": "JSON Editor (based on https://github.com/josdejong/svelte-jsoneditor)",
+    "icon": "Brackets",
+    "settings": [
+      {
+        "type": "field/string",
+        "key": "field",
+        "label": "Field",
+        "required": true
+      },
+      {
+        "type": "text",
+        "label": "Label",
+        "key": "label"
+      },
+      {
+        "type": "text",
+        "label": "Default Value",
+        "key": "defaultValue"
+      },
+      {
+        "type": "boolean",
+        "label": "Read Only",
+        "key": "readOnly"
+      },
+      {
+        "type": "validation/string",
+        "label": "Validation",
+        "key": "validation"
+      }
+    ]
+  }
+}
