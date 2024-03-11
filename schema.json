@@ -8,10 +8,22 @@
     "icon": "Brackets",
     "settings": [
       {
-        "type": "field/string",
-        "key": "field",
-        "label": "Field",
+        "type": "select",
+        "key": "fieldType",
+        "label": "Field Type",
+        "options": [{"label": "String", "value": "text"}, {"label": "JSON", "value": "json"}],
+        "defaultValue": "String",
         "required": true
+      },
+      {
+        "type": "field/string",
+        "key": "fieldText",
+        "label": "Field (String)"
+      },
+      {
+        "type": "field/json",
+        "key": "fieldJSON",
+        "label": "Field (JSON)"
       },
       {
         "type": "text",
@@ -30,8 +42,8 @@
       },
       {
         "type": "validation/string",
-        "label": "Validation",
-        "key": "validation"
+        "label": "Validation (String)",
+        "key": "validationText"
       }
     ]
   }

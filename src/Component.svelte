@@ -2,11 +2,13 @@
     import { JSONEditor } from 'svelte-jsoneditor';
     import { getContext, onDestroy } from "svelte";
 
-    export let field;
+    export let fieldText;
+    export let fieldJSON;
+    export let fieldType;
     export let label;
     export let defaultValue;
     export let readOnly;
-    export let validation;
+    export let validationText;
 
     const { styleable } = getContext("sdk");
     const component = getContext("component");
@@ -16,23 +18,55 @@
 
     let fieldState;
     let fieldApi;
-    let errors
+    let errors;
     let content;
     let unsubscribe;
 
+    function validateConfig() {
+        let configErrors = "";
+
+        if (!fieldText && !fieldJSON) {
+            configErrors = "Please select a form field\n";
+        }
+
+        if (fieldType !== 'text' &&  fieldType !== 'json') {
+            console.log(fieldText, fieldJSON);
+            configErrors = configErrors + "Select a field type\n";
+        }
+
+        if (fieldType !== 'text' && validationText) {
+            configErrors = configErrors + "Can only use Text validaton with Text typed field\n";
+        }
+
+        return configErrors.slice(0, -1);
+    }
+
+    function getField() {
+        if (fieldType === 'text') {
+            return fieldText;
+        }
+
+        if (fieldType === 'json') {
+            return fieldJSON;
+        }
+    }
+
+
     const formApi = formContext?.formApi;
     const labelPos = fieldGroupContext?.labelPosition || "above";
+
+    $: configErrors = validateConfig();
     $: formStep = formStepContext ? $formStepContext || 1 : 1;
     $: labelClass = labelPos === "above" ? "" : `spectrum-FieldLabel--${labelPos}`;
 
-    $: if (formApi && field) {
+    $: if (formApi && (fieldText || fieldJSON)) {
         const formField = formApi.registerField(
-            field,
-            "text",
+            getField(),
+            fieldType,
             defaultValue,
             false,
             readOnly,
-            validation,
+            validationText,
             formStep
         );
 
@@ -45,7 +79,8 @@
     $: {
         if (fieldState?.value !== undefined && content === null) {
           content = {
-            text: fieldState?.value
+            text: fieldType === 'text' ? fieldState?.value : undefined,
+            json: fieldType === 'json' ? fieldState?.value : undefined
           }
         }
     }
@@ -55,8 +90,26 @@
     })
 
     function handleChange(updatedContent, previousContent, { contentErrors, patchResult }) {
+        let value;
+        if (typeof updatedContent.text !== 'undefined') {
+            try {
+                    value = JSON.parse(updatedContent.text);
+                }
+                catch (err) {
+                    contentErrors = err.toString();
+                }
+        }
+        else {
+            value = updatedContent.json;
+        }
+
         if (!contentErrors) {
-            fieldApi.setValue(updatedContent.text);
+            if (fieldType === 'text') {
+                fieldApi.setValue(JSON.stringify(value))
+            }
+            if (fieldType === 'json') {
+                fieldApi.setValue(value);
+            }
         }
 
         errors = contentErrors;
@@ -64,31 +117,32 @@
 </script>
 
 <div class="spectrum-Form-item" use:styleable={$component.styles}>
-  {#if !formContext}
-    <div class="placeholder">Form components need to be wrapped in a form</div>
-  {:else}
-    <label
-      class:hidden={!label}
-      for={fieldState?.fieldId}
-      class={`spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel ${labelClass}`}
-    >
-      {label || " "}
-    </label>
-    <div class="spectrum-Form-itemField">
-      <div class="container">
-        <JSONEditor {content} onChange="{handleChange}" />
-      </div>
-      {#if !field}
-        <div class="error">Please select a form field</div>
-      {/if}
-      {#if errors}
-        <div class="error">{errors}</div>
-      {/if}
-      {#if fieldState?.error}
-        <div class="error">{fieldState.error}</div>
-      {/if}
-    </div>
-  {/if}
+    {#if !formContext}
+        <div class="placeholder">Form components need to be wrapped in a form</div>
+    {:else}
+        {#if !configErrors}
+            <label
+              class:hidden={!label}
+              for={fieldState?.fieldId}
+              class={`spectrum-FieldLabel spectrum-FieldLabel--sizeM spectrum-Form-itemLabel ${labelClass}`}
+            >
+              {label || " "}
+            </label>
+            <div class="spectrum-Form-itemField">
+                <div class="container">
+                    <JSONEditor {content} {readOnly} onChange="{handleChange}" />
+              </div>
+            </div>
+            {#if errors}
+                <div class="error">{errors}</div>
+            {/if}
+            {#if fieldState?.error}
+                <div class="error">{fieldState.error}</div>
+            {/if}
+        {:else}
+            <div class="error">{configErrors}</div>
+        {/if}
+    {/if}
 </div>
 
 <style>
