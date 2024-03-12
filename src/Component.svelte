@@ -30,7 +30,6 @@
         }
 
         if (fieldType !== 'text' &&  fieldType !== 'json') {
-            console.log(fieldText, fieldJSON);
             configErrors = configErrors + "Select a field type\n";
         }
 
@@ -59,18 +58,18 @@
     $: formStep = formStepContext ? $formStepContext || 1 : 1;
     $: labelClass = labelPos === "above" ? "" : `spectrum-FieldLabel--${labelPos}`;
 
-    $: if (formApi && (fieldText || fieldJSON)) {
+
+    $: if (formApi && (fieldText || fieldJSON) && !configErrors) {
         const formField = formApi.registerField(
             getField(),
             fieldType,
             defaultValue,
             false,
-            readOnly,
             validationText,
             formStep
         );
 
-        unsubscribe = formField.subscribe((value) => {
+        unsubscribe = formField?.subscribe((value) => {
             fieldState = value?.fieldState;
             fieldApi = value?.fieldApi;
         });

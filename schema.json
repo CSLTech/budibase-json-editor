@@ -12,7 +12,7 @@
         "key": "fieldType",
         "label": "Field Type",
         "options": [{"label": "String", "value": "text"}, {"label": "JSON", "value": "json"}],
-        "defaultValue": "String",
+        "defaultValue": "text",
         "required": true
       },
       {
