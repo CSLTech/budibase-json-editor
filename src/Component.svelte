@@ -52,7 +52,7 @@
             fieldType,
             defaultValue,
             false,
-            validationText,
+            fieldType === 'text' ? validationText : undefined,
             formStep
         );
 
@@ -71,7 +71,7 @@
                     value = JSON.parse(fieldState.value);
                 }
                 catch (err) {
-                    contentErrors = err.toString();
+                    errors = err.toString();
                 }
             }
 
@@ -88,21 +88,25 @@
         unsubscribe?.();
     })
 
-    function handleChange(updatedContent, previousContent, { contentErrors, patchResult }) {
+    function handleChange(updatedContent, previousContent, opts) {
         let value;
+        if (!opts) {
+            opts = {};
+        }
+
         if (typeof updatedContent.text !== 'undefined') {
             try {
                     value = JSON.parse(updatedContent.text);
                 }
                 catch (err) {
-                    contentErrors = err.toString();
+                    opts.contentErrors = err.toString();
                 }
         }
         else {
             value = updatedContent.json;
         }
 
-        if (!contentErrors) {
+        if (!opts.contentErrors) {
             if (fieldType === 'text') {
                 fieldApi.setValue(JSON.stringify(value))
             }
@@ -111,7 +115,7 @@
             }
         }
 
-        errors = contentErrors;
+        errors = opts.contentErrors;
     }
 </script>
 
