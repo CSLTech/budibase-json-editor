@@ -22,17 +22,6 @@
     let content;
     let unsubscribe;
 
-    function getField() {
-        if (fieldType === 'text') {
-            return fieldText;
-        }
-
-        if (fieldType === 'json') {
-            return fieldJSON;
-        }
-    }
-
-
     const formApi = formContext?.formApi;
     const labelPos = fieldGroupContext?.labelPosition || "above";
     let configErrors = "";
@@ -59,7 +48,7 @@
 
     $: if (formApi && (fieldText || fieldJSON) && !configErrors) {
         const formField = formApi.registerField(
-            getField(),
+            fieldType === 'text' && fieldText || fieldType === 'json' && fieldJSON,
             fieldType,
             defaultValue,
             false,
@@ -75,14 +64,27 @@
 
     $: {
         if (fieldState?.value !== undefined && content === undefined) {
-          content = {
-            text: fieldType === 'text' ? fieldState?.value : undefined,
-            json: fieldType === 'json' ? fieldState?.value : undefined
-          }
+            let value;
+
+            if (fieldType === 'text') {
+                try {
+                    value = JSON.parse(fieldState.value);
+                }
+                catch (err) {
+                    contentErrors = err.toString();
+                }
+            }
+
+            if (value !== undefined) {
+                content = {
+                    json: value
+                };
+            }
         }
     }
 
     onDestroy(() => {
+        fieldApi?.deregister();
         unsubscribe?.();
     })
 
