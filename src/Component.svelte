@@ -76,7 +76,7 @@
     }
 
     $: {
-        if (fieldState?.value !== undefined && content === null) {
+        if (fieldState?.value !== undefined && content === undefined) {
           content = {
             text: fieldType === 'text' ? fieldState?.value : undefined,
             json: fieldType === 'json' ? fieldState?.value : undefined

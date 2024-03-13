@@ -18,12 +18,20 @@
       {
         "type": "field/string",
         "key": "fieldText",
-        "label": "Field (String)"
+        "label": "Field (String)",
+        "dependsOn": {
+          "setting": "fieldType",
+          "value": "text"
+        }
       },
       {
         "type": "field/json",
         "key": "fieldJSON",
-        "label": "Field (JSON)"
+        "label": "Field (JSON)",
+        "dependsOn": {
+          "setting": "fieldType",
+          "value": "json"
+        }
       },
       {
         "type": "text",
