@@ -50,7 +50,7 @@
         const formField = formApi.registerField(
             fieldType === 'text' && fieldText || fieldType === 'json' && fieldJSON,
             fieldType,
-            defaultValue,
+            fieldType === 'text' ? '{}': {},
             false,
             fieldType === 'text' ? validationText : undefined,
             formStep
@@ -64,11 +64,11 @@
 
     $: {
         if (fieldState?.value !== undefined && content === undefined) {
-            let value;
+            let value = fieldState?.value;
 
             if (fieldType === 'text') {
                 try {
-                    value = JSON.parse(fieldState.value);
+                    value = JSON.parse(value);
                 }
                 catch (err) {
                     errors = err.toString();
@@ -80,6 +80,8 @@
                     json: value
                 };
             }
+
+            console.log(`New value`, value);
         }
     }
 

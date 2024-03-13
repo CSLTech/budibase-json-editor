@@ -39,11 +39,6 @@
         "key": "label"
       },
       {
-        "type": "text",
-        "label": "Default Value",
-        "key": "defaultValue"
-      },
-      {
         "type": "boolean",
         "label": "Read Only",
         "key": "readOnly"
