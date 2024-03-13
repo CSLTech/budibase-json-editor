@@ -22,24 +22,6 @@
     let content;
     let unsubscribe;
 
-    function validateConfig() {
-        let configErrors = "";
-
-        if (!fieldText && !fieldJSON) {
-            configErrors = "Please select a form field\n";
-        }
-
-        if (fieldType !== 'text' &&  fieldType !== 'json') {
-            configErrors = configErrors + "Select a field type\n";
-        }
-
-        if (fieldType !== 'text' && validationText) {
-            configErrors = configErrors + "Can only use Text validaton with Text typed field\n";
-        }
-
-        return configErrors.slice(0, -1);
-    }
-
     function getField() {
         if (fieldType === 'text') {
             return fieldText;
@@ -53,8 +35,24 @@
 
     const formApi = formContext?.formApi;
     const labelPos = fieldGroupContext?.labelPosition || "above";
+    let configErrors = "";
 
-    $: configErrors = validateConfig();
+    $: {
+        configErrors = "";
+
+        if (!fieldText && !fieldJSON) {
+            configErrors = "Please select a form field\n";
+        }
+
+        if (fieldType !== 'text' &&  fieldType !== 'json') {
+            configErrors = configErrors + "Select a field type\n";
+        }
+
+        if (fieldType !== 'text' && validationText) {
+            configErrors = configErrors + "Can only use Text validaton with Text typed field\n";
+        }
+    }
+
     $: formStep = formStepContext ? $formStepContext || 1 : 1;
     $: labelClass = labelPos === "above" ? "" : `spectrum-FieldLabel--${labelPos}`;
 
