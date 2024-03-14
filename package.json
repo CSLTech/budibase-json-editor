@@ -1,6 +1,6 @@
 {
   "name": "json-editor",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "JSON Editor (based on https://github.com/josdejong/svelte-jsoneditor)",
   "license": "MIT",
   "svelte": "index.js",

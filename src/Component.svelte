@@ -6,7 +6,6 @@
     export let fieldJSON;
     export let fieldType;
     export let label;
-    export let defaultValue;
     export let readOnly;
     export let validationText;
 
@@ -50,7 +49,7 @@
         const formField = formApi.registerField(
             fieldType === 'text' && fieldText || fieldType === 'json' && fieldJSON,
             fieldType,
-            fieldType === 'text' ? '{}': {},
+            fieldType === 'text' ? 'null': null,
             false,
             fieldType === 'text' ? validationText : undefined,
             formStep
@@ -80,8 +79,6 @@
                     json: value
                 };
             }
-
-            console.log(`New value`, value);
         }
     }
 
